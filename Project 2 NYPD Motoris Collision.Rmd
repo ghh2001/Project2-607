@@ -1,0 +1,80 @@
+---
+title: "Project 2 NYPD Motoris Collision"
+author: "Hui (Gracie) Han"
+date: "October 8, 2018"
+output: html_document
+---
+```{r}
+getwd()
+setwd('D:/Project2 Week6 Due Oct7 GH DataToUse')
+```
+
+
+
+```{r}
+library(tidyr)
+library(dplyr)
+```
+
+```{r}
+NYPDCollision <- tbl_df(read.csv("NYPDAug2017_Motor_Vehicle_Collisions.csv", stringsAsFactors = FALSE, check.names = FALSE))
+
+head(NYPDCollision)
+tail(NYPDCollision)
+```
+
+```{r}
+NYPDCollision.ByInjuryType2 <- NYPDCollision %>% 
+gather(InJury_type,NofCases, c("Number_of_Motor_Vehicle_Collisions", "Vehicles_or_Motorists_Involved", "Injury_or_Fatal_Collisions","MotoristsInjured","MotoristsKilled","PassengInjured","CyclistsInjured",
+"CyclistsKilled","PedestrInjured","PedestrKilled","Bicycle" ))
+
+head(NYPDCollision.ByInjuryType2)
+tail(NYPDCollision.ByInjuryType2)
+```
+Find the Min N of cases, and the Maximum N of cases, by Injury Type 
+```{r}
+NYPDCollision.ByInjuryType_Max <- NYPDCollision.ByInjuryType2 %>% 
+  group_by(InJury_type) %>% 
+  arrange(-NofCases) %>%
+  filter(row_number()==1)
+
+NYPDCollision.ByInjuryType_Min <- NYPDCollision.ByInjuryType2 %>% 
+  group_by(InJury_type) %>% arrange(NofCases) %>%
+  filter(row_number()==1)
+
+(NYPDCollision.ByInjuryType_Max)
+(NYPDCollision.ByInjuryType_Min)
+```
+
+To Examine the highest collion rate by location of Boro
+```{r}
+NYPDCollision.ByBoro_Max2 <- NYPDCollision.ByInjuryType2 %>% 
+  group_by(Boro_Location) %>% 
+  arrange(-NofCases) %>%
+  filter(row_number()==1)
+
+(NYPDCollision.ByBoro_Max2)
+```
+write a csv file for data visulization
+```{r}
+write.csv(NYPDCollision.ByBoro_Max2, 'NYPDCollisionByBoro_Max.csv')
+```
+conclusion from above analysis: the maximum number of cases (1248 cases) occured in the Queens 109th Precint
+
+
+Find the Max N of cases, by the location and the Injury Type 
+```{r}
+NYPDCollision.ByBoroInjuryType_Max3 <- NYPDCollision.ByInjuryType2 %>% 
+  group_by(Boro_Location, InJury_type) %>% 
+  arrange(-NofCases) %>%
+  filter(row_number()==1)
+
+(NYPDCollision.ByBoroInjuryType_Max3)
+
+```
+write a csv file for data visulization
+
+```{r}
+write.csv(NYPDCollision.ByBoroInjuryType_Max3, 'NYPDCollisionByBoroInjuryType_Max.csv')
+```
+conclusion from above analysis: the maximum number of cases (1248 cases) occured in the Queens 109th Precint, with the most injury type as 'Vehicles_or_Motorists_Involved'

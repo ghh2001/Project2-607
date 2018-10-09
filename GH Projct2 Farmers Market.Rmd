@@ -1,0 +1,103 @@
+---
+title: "GH Projct2 Farmers Market"
+author: "Hui (Gracie) Han"
+date: "October 7, 2018"
+output: html_document
+---
+```{r}
+# file name: GH Project2 Doctors Who Do not travel 
+
+getwd()
+
+setwd('D:/Project2 Week6 Due Oct7 GH DataToUse')
+
+
+```
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(sqldf)
+library(magrittr)
+library(DT)
+```
+
+```{r}
+dataraw <- read.csv ("D:/Project2 Week6 Due Oct7 GH DataToUse/FarmersMarkets.csv")
+print(dataraw)
+```
+to select only the needed column, to get rid of the colun not needed, gather the data and eleimnate the col nont needed
+```{r}
+Data1 <- dataraw %>% 
+  select (c (FMID,city,State,x,y,Organic,Bakedgoods,Cheese,Eggs,Seafood,Vegetables,Meat,Nuts,Poultry))
+summary (Data1)
+head(Data1)
+tail(Data1)
+```
+
+```{r}
+
+Data2 <- 
+  Data1 %>% 
+   gather( Product, YN, c(6:14), na.rm = TRUE)  %>%   
+  group_by(State)  %>% 
+   arrange(State)
+
+summary (Data2)
+ head(Data2)
+ tail(Data2)
+ 
+```
+
+```{r}
+
+Data4 <- 
+  Data2 %>% 
+  summarise (n=n() )
+  
+print (Data4)
+# above gave us how many farmers market in each state
+ 
+
+```
+ below section did not work, need to delete
+ 
+```{r}
+Data3<-as.data.frame(Data2)
+
+ Data6 <- 
+  Data3 %>% 
+   count(Product)
+  #summarise (n=n() ) %>% 
+group_by(Product) 
+#group_by_(Product)
+
+print (Data6)
+```
+
+```{r}
+f<-ggplot (Data4, aes(State,n))
+f+geom_col()
+
+```
+to subset the data where the most farmers markets are found, two states
+```{r}
+Data81 <- Data2 %>% 
+  filter (State %in% c('New York','California'))
+print(Data81)
+
+Data82 <- Data2 %>% 
+  filter (State %in% c('New York'))
+print(Data82)
+
+```
+below section did not work
+
+```{r}
+Data9 <- Data82  %>% 
+  summarise (n = n() ) %>% 
+group_by(city) 
+
+```
+

@@ -1,0 +1,92 @@
+---
+title: "GH Projct2 Doctors Donot travel"
+author: "Hui (Gracie) Han"
+date: "October 7, 2018"
+output: html_document
+---
+
+Purpose:
+1) choose the dataset of "Doctors who do not travel", which was identified by other student in the week5 discussion
+2) Read the information from csv file into R
+3)this dataset is in a long format (the location of doctors who travel are in their own row), need to be spread into wide format
+4) some varibles are not needed, so we get rid of it
+5) Do some plots for data visulization
+ 6) Research qeustion: 
+
+```{r}
+# file name: GH Project2 Doctors Who Do not travel 
+
+getwd()
+
+setwd('D:/Project2 Week6 Due Oct7 GH DataToUse')
+
+```
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(sqldf)
+library(magrittr)
+library(DT)
+```
+
+```{r}
+dataraw2 <- read.csv ("D:/Project2 Week6 Due Oct7 GH DataToUse/Doctor Who Time Travel Journeys.csv")
+print(dataraw2)
+```
+to select only the needed column, to get rid of the columnn not needed, 
+```{r}
+Data11 <- dataraw2 %>% 
+  select (c (Doctor.Who.season, doctor.actor,ep..no,from,estimated.from,
+    planet,sub.location, location)
+    )
+summary (Data11)
+head(Data11)
+tail(Data11)
+```
+```{r}
+# get rid of row 98, because it is exactly the same as row 59, which causes problem in the spread function downstream
+#Error: Duplicate identifiers for rows (59, 98), this error was fixed in the earlier block, otherwise this  block will not run
+Data31 <- Data11 [-98,]
+print (Data31)
+```
+Tospread the data Iit is in the long format, need to be transformed into wide format), and eleimnate the col nont needed
+```{r}
+
+
+Data51 <- 
+  Data31 %>% 
+  spread(planet,sub.location ) %>% 
+
+ group_by(from)  %>% 
+   arrange(from)
+# this (from) variable is the year variable
+
+summary (Data51)
+ head(Data51)
+ tail(Data51)
+ #print(Data51)
+ 
+```
+```{r}
+write.csv (Data11,'Data51DoctorsWhoTravel.csv')
+# this is 135*6 dimension table,
+```
+
+```{r}
+# Analyse the data by season of the show
+Data71 <- Data51 %>%
+  group_by (Doctor.Who.season)
+head(Data71)
+tail (Data71)
+print(Data71)
+```{
+```
+  
+```
+
+```{r}
+write.csv (Data71,'Data71DoctorsWhoTravel.csv')
+# this is 135 * 17 dimention
+```
